@@ -1,6 +1,11 @@
+# Built with
+Java
+- Swing for GUI
+- JUnit for testing
+
 # Usage
 
-- Build a graph first:
+- Build a graph first (enter the file name, e.g. ```data/test1.txt```:
   
   ![image](https://github.com/MovieTone/ClassCompilationOrderAnalyzer/assets/15722914/594824f3-c8d0-4352-a5b1-b9ecfb11981a)
 
