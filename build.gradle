@@ -1,0 +1,32 @@
+plugins {
+    id("application")
+//    id("test")
+}
+
+group 'com.movietone'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+}
+
+application {
+    mainClass.set("com.movietone.P4GUI")
+}
