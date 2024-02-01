@@ -18,32 +18,32 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 /**
- * P4GUI class represents GUI for the program, the aim of which is to build a class dependency graph and sort it in topological order so that one can
+ * UserInterface class represents GUI for the program, the aim of which is to build a class dependency graph and sort it in topological order so that one can
  * see a recompilation order
  */
 public class UserInterface extends JFrame implements ActionListener {
 
-    private Graph<String> graph;
+    private final Graph<String> graph;
 
     // labels
-    private JLabel inputLabel = new JLabel("Input file name:");
-    private JLabel classLabel = new JLabel("Class to recompile:");
+    private final JLabel inputLabel = new JLabel("Input file name:");
+    private final JLabel classLabel = new JLabel("Class to recompile:");
 
     // text fields
-    private JTextField fileNameTextField = new JTextField(10);
-    private JTextField classNameTextField = new JTextField(10);
+    private final JTextField fileNameTextField = new JTextField(10);
+    private final JTextField classNameTextField = new JTextField(10);
 
     // buttons
-    private JButton buildGraphButton = new JButton("Build Directed Graph");
-    private JButton topoButton = new JButton("Topological Order");
+    private final JButton buildGraphButton = new JButton("Build Directed Graph");
+    private final JButton topoButton = new JButton("Topological Order");
 
     // panels
-    private JPanel bottomPanel = new JPanel();
-    private JPanel topPanel = new JPanel();
-    private JPanel panel = new JPanel();
+    private final JPanel bottomPanel = new JPanel();
+    private final JPanel topPanel = new JPanel();
+    private final JPanel panel = new JPanel();
 
     // text area
-    private JTextArea orderTextArea = new JTextArea(10, 40);
+    private final JTextArea orderTextArea = new JTextArea(10, 40);
 
     // information and error messages
     private static final String WINDOW_NAME = "Class Dependency Graph";
@@ -57,19 +57,19 @@ public class UserInterface extends JFrame implements ActionListener {
         orderTextArea.setEditable(false);
         graph = new Graph<>();
 
-        // set panel
+        // sets a panel
         setPanel();
 
-        // add listeners to the buttons
+        // adds listeners to the buttons
         addListeners();
 
         pack();
     }
 
     /**
-     * starts the program and runs the GUI
+     * Starts the program and runs GUI
      *
-     * @param args console params
+     * @param args no console params
      */
     public static void main(String[] args) {
         UserInterface gui = new UserInterface();
@@ -77,7 +77,7 @@ public class UserInterface extends JFrame implements ActionListener {
     }
 
     /**
-     * handles buttons clicking
+     * Handles buttons
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -96,26 +96,26 @@ public class UserInterface extends JFrame implements ActionListener {
     }
 
     /**
-     * sets the main panel
+     * Sets the main panel
      */
     private void setPanel() {
-        // set the bottom panel
+        // sets the bottom panel
         setBottomPanel();
 
-        // set the top panel
+        // sets the top panel
         setTopPanel();
 
-        // set main panel
+        // sets main panel
         panel.add(topPanel);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        // add panels to the frame
+        // adds panels to the frame
         add(panel, BorderLayout.NORTH);
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
     /**
-     * sets the bottom panel
+     * Sets the bottom panel
      */
     private void setBottomPanel() {
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
@@ -124,7 +124,7 @@ public class UserInterface extends JFrame implements ActionListener {
     }
 
     /**
-     * sets the top panel
+     * Sets the top panel
      */
     private void setTopPanel() {
         topPanel.setLayout(new GridLayout(2, 3, 10, 10));
@@ -137,7 +137,7 @@ public class UserInterface extends JFrame implements ActionListener {
     }
 
     /**
-     * adds listeners to the buttons
+     * Adds listeners to the buttons
      */
     private void addListeners() {
         buildGraphButton.addActionListener(this);
@@ -145,7 +145,7 @@ public class UserInterface extends JFrame implements ActionListener {
     }
 
     /**
-     * handles button Topological Order
+     * Handles the Topological Order button
      *
      * @throws CycleDetectedException    if cycle is found
      * @throws InvalidClassNameException if the class does not match any class read from the file
@@ -153,28 +153,26 @@ public class UserInterface extends JFrame implements ActionListener {
      */
     public void handleTopoButton() throws CycleDetectedException, InvalidClassNameException, GraphNotBuiltException {
         String className = classNameTextField.getText();
-        // if no class name is specified
         if (className.isEmpty()) {
             JOptionPane.showMessageDialog(this, ENTER_CLASS_NAME);
             return;
         }
-        // generate a string of classes in topological order and set it to the textArea
+        // generates a string of classes in topological order and sets it to the textArea
         orderTextArea.setText(graph.generateTopoString(className));
     }
 
     /**
-     * handles button Build Graph
+     * Handles button Build Graph
      *
      * @throws FileNotFoundException if no file found
      */
     public void handleBuildGraphButton() throws FileNotFoundException {
         String fileName = fileNameTextField.getText();
-        // if no file name is specified
         if (fileName.isEmpty()) {
             JOptionPane.showMessageDialog(this, ENTER_FILE_NAME);
             return;
         }
-        // load a graph from the file and show a message
+        // loads a graph from a file and shows a message
         String message = graph.loadGraph(fileName);
         JOptionPane.showMessageDialog(this, message);
     }

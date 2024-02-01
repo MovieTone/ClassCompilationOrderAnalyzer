@@ -28,5 +28,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.movietone.P4GUI")
+    mainClass.set("com.movietone.UserInterface")
 }

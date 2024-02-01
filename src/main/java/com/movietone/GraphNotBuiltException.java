@@ -6,7 +6,7 @@ package com.movietone;
 public class GraphNotBuiltException extends Exception {
 
     // exception message
-    private static final String EXCEPTION_MESSAGE = "Build The main.java.com.movietone.Graph First";
+    private static final String EXCEPTION_MESSAGE = "Build the Graph First";
 
     public GraphNotBuiltException() {
         super(EXCEPTION_MESSAGE);

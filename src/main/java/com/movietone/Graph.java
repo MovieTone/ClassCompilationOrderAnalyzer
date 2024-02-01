@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +20,16 @@ import java.util.Stack;
  */
 public class Graph<Type> {
 
-    // adjacency list
-    private List<LinkedList<Integer>> adjList;
-    // map holding pairs of classes and relevant indices
-    private Map<Type, Integer> classesIndices;
+    // an adjacency list
+    private final List<LinkedList<Integer>> adjList;
+    // a map holding pairs of classes and relevant indices
+    private final Map<Type, Integer> classesIndices;
 
-    private static final String BUILT_SUCCESS = "Graph Built Sucessfully";
+    private static final String BUILD_SUCCESS = "Graph Built Successfully";
     private static final String FILE_NOT_OPEN = "File Did Not Open";
 
     /**
-     * initializing adjacency list and a map of classes and indices objects
+     * Graph constructor
      */
     public Graph() {
         adjList = new ArrayList<>();
@@ -38,40 +37,40 @@ public class Graph<Type> {
     }
 
     /**
-     * reads data from file and initializes a graph with it
+     * Reads data from file and initializes a graph with it
      *
      * @param fileName name of the file to read data from
      * @return a success message if graph is built with no error
      * @throws FileNotFoundException if the file is not found
      */
-    @SuppressWarnings({"unchecked", "resource"})
     public String loadGraph(String fileName) throws FileNotFoundException {
         try {
             List<LinkedList<Integer>> list = new ArrayList<>();
             Scanner file = new Scanner(new File(fileName));
             int vertexNum = 0;
-            // read the file line by line
+            // reads the file line by line
             while (file.hasNextLine()) {
                 LinkedList<Integer> vertices = new LinkedList<>();
-                // split the line into single words
-                Type nodes[] = (Type[]) file.nextLine().split(" ");
+                // splits the line into single words
+                Type[] nodes = (Type[]) file.nextLine().split(" ");
                 for (Type node : nodes) {
                     // if such class already exists
                     if (classesIndices.get(node) != null) {
                         vertices.add(classesIndices.get(node));
-                    } else {
-                        // put this vertex to the map
-                        classesIndices.put(node, vertexNum);
-                        vertices.add(vertexNum);
-                        vertexNum++;
+                        continue;
                     }
+
+                    // puts this vertex to the map
+                    classesIndices.put(node, vertexNum);
+                    vertices.add(vertexNum);
+                    vertexNum++;
                 }
                 list.add(vertices);
             }
 
-            // initialize the adjacency list with the data read
+            // initializes the adjacency list with the data read
             for (int i = 0; i < vertexNum; i++) {
-                adjList.add(new LinkedList<Integer>());
+                adjList.add(new LinkedList<>());
             }
             for (LinkedList<Integer> vertices : list) {
                 int first = vertices.removeFirst();
@@ -83,11 +82,11 @@ public class Graph<Type> {
         }
 
         // if the graph is successfully built
-        return BUILT_SUCCESS;
+        return BUILD_SUCCESS;
     }
 
     /**
-     * generates a string containing classes that need to be recompiled in topological order
+     * Generates a string containing classes that need to be recompiled in topological order
      *
      * @param className name of the class to start from
      * @return string containing classes in topological order
@@ -102,7 +101,7 @@ public class Graph<Type> {
             throw new GraphNotBuiltException();
         }
 
-        // get index of the class
+        // gets index of the class
         Integer vertex = classesIndices.get(className);
         // if no such class found
         if (vertex == null) {
@@ -110,21 +109,22 @@ public class Graph<Type> {
         }
 
         Stack<Integer> stack = new Stack<>();
-        // mark all vertices as not visited
-        boolean visited[] = new boolean[adjList.size()];
-        // call recursive helper function from the given vertex
+        // marks all vertices as not visited
+        boolean[] visited = new boolean[adjList.size()];
+        // calls recursive helper function from the given vertex
         topoSort(vertex, visited, stack);
 
-        // popping the stack elements into the res variable
-        String res = "";
+        // pops the stack elements into the res variable
+        StringBuilder res = new StringBuilder();
         while (!stack.empty()) {
-            res += getKeyByValue(classesIndices, stack.pop()) + " ";
+            res.append(getKeyByValue(classesIndices, stack.pop())).append(" ");
         }
-        return res;
+
+        return res.toString();
     }
 
     /**
-     * adds an edge to the graph
+     * Adds an edge to the graph
      *
      * @param u first vertex index
      * @param v second vertex index
@@ -134,52 +134,51 @@ public class Graph<Type> {
     }
 
     /**
-     * adds a vertex to the graph
+     * Adds a vertex to the graph
      *
      * @param node a node to add
      */
     public void addVertex(Type node) {
         int vertex = adjList.size();
         // if map does not already contain this class
-        if (classesIndices.get(node) == null) {
-            classesIndices.put(node, vertex);
-        } else {
+        if (classesIndices.get(node) != null) {
             return;
         }
-        // add empty linked list of adjacent vertices
+        classesIndices.put(node, vertex);
+
+        // adds empty linked list of adjacent vertices
         adjList.add(new LinkedList<>());
     }
 
     /**
-     * recursive helper method used by generateTopoString
+     * Recursive helper method used by generateTopoString
      *
      * @param v       current vertex
      * @param visited array defining which vertices are already visited
      * @param stack   resulting stack
      * @throws CycleDetectedException if cycle is detected
      */
-    private void topoSort(int v, boolean visited[], Stack<Integer> stack) throws CycleDetectedException {
+    private void topoSort(int v, boolean[] visited, Stack<Integer> stack) throws CycleDetectedException {
         // if current vertex is already visited then we detect a cycle
         if (visited[v]) {
             throw new CycleDetectedException();
         }
 
-        // mark current vertex as visited
+        // marks current vertex as visited
         visited[v] = true;
         int i;
-        // call this method for all adjacent vertices to the given one
-        Iterator<Integer> it = adjList.get(v).iterator();
-        while (it.hasNext()) {
-            i = it.next();
+        // calls this method for all adjacent vertices to the given one
+        for (Integer integer : adjList.get(v)) {
+            i = integer;
             topoSort(i, visited, stack);
         }
 
-        // push current vertex index to a resulting stack
+        // pushes current vertex index to a resulting stack
         stack.push(v);
     }
 
     /**
-     * helper method to get key element by its value from the map
+     * Helper method to get a key by its value in the map
      *
      * @param map   map to get key from
      * @param value value to find the key by
@@ -202,8 +201,8 @@ public class Graph<Type> {
         return classesIndices;
     }
 
-    public static String getBuiltSuccess() {
-        return BUILT_SUCCESS;
+    public static String getBuildSuccess() {
+        return BUILD_SUCCESS;
     }
 
 }
